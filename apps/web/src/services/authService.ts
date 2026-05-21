@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_BASE } from '../config';
+import type { ApiResponse } from '@med/shared-types';
 
 export interface LoginDto {
   username: string;

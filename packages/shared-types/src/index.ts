@@ -151,11 +151,20 @@ export type UserRole = 'admin' | 'manager' | 'operator' | 'driver' | 'viewer';
 export interface Customer {
   _id: string;
   name: string;
+  code: string;
   type: 'hospital' | 'pharmacy' | 'clinic' | 'distributor' | 'other';
   address: Address;
-  contacts: { name: string; phone: string; role: string }[];
+  contacts: { name: string; phone: string; role: string; isPrimary: boolean; email?: string; wechat?: string }[];
   creditLevel: number;
   ordersCount: number;
+  totalAmount: number;
+  enabled: boolean;
+  businessLicense?: { number: string; expiryDate: string; scope: string };
+  qualityCert?: { gsp?: boolean; gmp?: boolean; other?: string[] };
+  temperatureRequirements?: string[];
+  receivingWindow?: { weekdays: number[]; startTime: string; endTime: string };
+  tags?: { label: string; color?: string }[];
+  remark?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -202,23 +211,18 @@ export interface InventoryItem {
 export interface Vehicle {
   _id: string;
   plateNumber: string;
+  brand: string;
+  vehicleModel: string;
+  year?: number;
   type: VehicleType;
   status: VehicleStatus;
-  capacity: {
-    weight: number;     // kg
-    volume: number;     // m³
-    pallets: number;
-  };
+  capacity: number;     // kg
+  maxWeight: number;    // max load weight
   temperatureZones: TemperatureZone[];
-  equipment: {
-    hasGPS: boolean;
-    hasThermometer: boolean;
-    hasCamera: boolean;
-    hasLock: boolean;
-  };
-  lastMaintenanceAt: string;
-  nextMaintenanceAt: string;
   currentLocation?: GeoPoint;
+  currentDriverId?: string;
+  currentWarehouseId?: string;
+  enabled: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -230,12 +234,11 @@ export interface Driver {
   licenseNumber: string;
   licenseType: string;
   status: DriverStatus;
-  rating: number;
-  totalOrders: number;
+  idCard?: string;
+  certifications: string[];
+  currentLocation?: GeoPoint;
   currentVehicleId?: string;
-  workStartTime: string;
-  workEndTime: string;
-  maxWorkHours: number;
+  enabled: boolean;
   createdAt: string;
   updatedAt: string;
 }

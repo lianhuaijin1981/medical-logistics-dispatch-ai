@@ -12,6 +12,9 @@ const OrderManagement = lazy(() => import('./pages/orders/OrderManagement'));
 const WarehouseOverview = lazy(() => import('./pages/warehouse/WarehouseOverview'));
 const DispatchCenter = lazy(() => import('./pages/dispatch/DispatchCenter'));
 const VehicleTracking = lazy(() => import('./pages/tracking/VehicleTracking'));
+const VehicleManagement = lazy(() => import('./pages/vehicles/VehicleManagement'));
+const DriverManagement = lazy(() => import('./pages/drivers/DriverManagement'));
+const CustomerManagement = lazy(() => import('./pages/customers/CustomerManagement'));
 const ColdChainMonitor = lazy(() => import('./pages/coldchain/ColdChainMonitor'));
 const Analytics = lazy(() => import('./pages/analytics/Analytics'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -40,6 +43,9 @@ const App: React.FC = () => {
             <Route path="warehouse" element={<WarehouseOverview />} />
             <Route path="dispatch" element={<DispatchCenter />} />
             <Route path="tracking" element={<VehicleTracking />} />
+            <Route path="vehicles" element={<VehicleManagement />} />
+            <Route path="drivers" element={<DriverManagement />} />
+            <Route path="customers" element={<CustomerManagement />} />
             <Route path="cold-chain" element={<ColdChainMonitor />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="*" element={<NotFound />} />

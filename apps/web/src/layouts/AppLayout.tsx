@@ -6,6 +6,8 @@ const navItems = [
   { path: '/dashboard', label: '运营大盘', icon: '📊' },
   { path: '/orders', label: '订单管理', icon: '📋' },
   { path: '/warehouse', label: '仓储管理', icon: '🏭' },
+  { path: '/vehicles', label: '车辆管理', icon: '🚚' },
+  { path: '/drivers', label: '司机管理', icon: '👤' },
   { path: '/dispatch', label: '调度中心', icon: '🚛' },
   { path: '/tracking', label: '车辆追踪', icon: '📍' },
   { path: '/cold-chain', label: '冷链监控', icon: '🌡️' },
