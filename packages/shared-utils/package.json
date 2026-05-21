@@ -11,8 +11,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@med/shared-types": "workspace:*",
     "dayjs": "^1.11.0",
-    "clsx": "^2.1.0"
+    "clsx": "^2.1.0",
+    "nanoid": "^5.0.0"
   },
   "devDependencies": {
     "typescript": "~5.7.0",

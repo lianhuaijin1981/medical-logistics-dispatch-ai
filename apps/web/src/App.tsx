@@ -1,10 +1,12 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { ErrorBoundary } from '@med/ui-components';
-import AppLayout from './layouts/AppLayout';
 import { Loading } from '@med/ui-components';
+import ProtectedRoute from './components/ProtectedRoute';
+import AppLayout from './layouts/AppLayout';
 
 // Lazy-load pages
+const Login = lazy(() => import('./pages/auth/Login'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const OrderManagement = lazy(() => import('./pages/orders/OrderManagement'));
 const WarehouseOverview = lazy(() => import('./pages/warehouse/WarehouseOverview'));
@@ -19,7 +21,18 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <Suspense fallback={<Loading text="页面加载中..." size="lg" />}>
         <Routes>
-          <Route path="/" element={<AppLayout />}>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="orders" element={<OrderManagement />} />

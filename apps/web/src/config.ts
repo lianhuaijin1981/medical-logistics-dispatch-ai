@@ -3,7 +3,8 @@ export const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}
 
 // API endpoints
 export const ENDPOINTS = {
-  AUTH: { LOGIN: `${API_BASE}/auth/login`, LOGOUT: `${API_BASE}/auth/logout`, PROFILE: `${API_BASE}/auth/profile` },
+  AUTH: { LOGIN: `${API_BASE}/auth/login`, PROFILE: `${API_BASE}/auth/profile` },
+  DASHBOARD: `${API_BASE}/dashboard/stats`,
   ORDERS: `${API_BASE}/orders`,
   WAREHOUSES: `${API_BASE}/warehouses`,
   INVENTORY: `${API_BASE}/inventory`,

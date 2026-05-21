@@ -20,6 +20,8 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ColdChainModule } from './modules/cold-chain/cold-chain.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { AiProxyModule } from './modules/ai-proxy/ai-proxy.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { AlertsModule } from './modules/alerts/alerts.module';
 
 @Module({
   imports: [
@@ -68,6 +70,8 @@ import { AiProxyModule } from './modules/ai-proxy/ai-proxy.module';
     ColdChainModule,
     ReportsModule,
     AiProxyModule,
+    DashboardModule,
+    AlertsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
