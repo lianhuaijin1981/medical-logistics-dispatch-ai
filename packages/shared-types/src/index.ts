@@ -365,6 +365,7 @@ export interface ColdChainRecord {
   zone: TemperatureZone;
   withinRange: boolean;
   alertGenerated: boolean;
+  rangeLimit?: { min: number; max: number; unit: string };
 }
 
 export interface Alert {

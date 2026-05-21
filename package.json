@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "turbo dev",
     "dev:api": "turbo dev --filter=@med/api",
+    "dev:api:mock": "pnpm --filter @med/api dev:mock",
     "dev:web": "turbo dev --filter=@med/web",
     "dev:ai": "turbo dev --filter=@med/ai-service",
     "build": "turbo build",

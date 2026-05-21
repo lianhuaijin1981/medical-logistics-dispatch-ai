@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from '@ne
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AlertsService } from './alerts.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateAlertDto, UpdateAlertDto } from '../../dto/alert.dto';
 
 @ApiTags('alerts')
 @Controller('alerts')
@@ -24,7 +25,7 @@ export class AlertsController {
 
   @Patch(':id/resolve')
   @ApiOperation({ summary: '处理告警' })
-  resolve(@Param('id') id: string, @Body() body: { note?: string; resolvedBy?: string }) {
-    return this.alertsService.resolve(id, body.note, body.resolvedBy);
+  resolve(@Param('id') id: string, @Body() dto: UpdateAlertDto) {
+    return this.alertsService.resolve(id, dto.resolutionNote, dto.resolvedBy);
   }
 }

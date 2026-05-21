@@ -47,7 +47,7 @@ const Dashboard: React.FC = () => {
         <h2 className="text-base font-semibold text-gray-900 mb-4">订单概况</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard title="订单总量" value={formatNumber(orders.total)} icon="📦" />
-          <StatCard title="今日新增" value={formatNumber(orders.todayCount)} icon="📈" trend="up" />
+          <StatCard title="今日新增" value={formatNumber(orders.todayCount)} icon="📈" trend={{ direction: 'up', value: '12%' }} />
           <StatCard title="待处理" value={formatNumber(orders.pending)} icon="⏳" />
           <StatCard title="处理中" value={formatNumber(orders.processing)} icon="🔄" />
           <StatCard title="已发货" value={formatNumber(orders.shipped)} icon="🚚" />

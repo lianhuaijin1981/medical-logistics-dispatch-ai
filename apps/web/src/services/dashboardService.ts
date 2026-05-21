@@ -47,7 +47,9 @@ export interface DashboardStats {
   }[];
 }
 
-export async function getDashboardStats(): Promise<DashboardStats> {
+export const getDashboardStats = async (): Promise<DashboardStats> => {
   const { data } = await axios.get(`${API_BASE}/dashboard/stats`);
   return data;
-}
+};
+
+export default { getDashboardStats };

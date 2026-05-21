@@ -18,6 +18,21 @@ export class AuthService {
   ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
+    // DEV MODE: short-circuit auth when NODE_ENV=development
+    // Set in main.dev.ts before NestFactory.create()
+    const isDev = (process.env.NODE_ENV || '').toLowerCase() === 'development';
+    if (isDev) {
+      return {
+        _id: '507f1f77bcf86cd799439011',
+        id: '507f1f77bcf86cd799439011',
+        username,
+        realName: username === 'admin' ? '管理员' : username,
+        role: username === 'admin' ? 'admin' : 'operator',
+        phone: '13800138000',
+        email: `${username}@med-logistics.com`,
+        isActive: true,
+    };
+    }
     const user = await this.usersService.findByUsername(username);
     if (!user) return null;
     const isValid = await this.usersService.validatePassword(user, password);

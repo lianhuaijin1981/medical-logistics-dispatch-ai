@@ -1,24 +1,103 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ColdChainRecord, ColdChainRecordDocument, ColdChainAlertStatus } from './cold-chain.schema';
 
 @Injectable()
 export class ColdChainService {
+  constructor(
+    @InjectModel(ColdChainRecord.name) private ccModel: Model<ColdChainRecordDocument>,
+  ) {}
+
   async findAll(query: any) {
-    return { data: [], total: 0, page: 1, pageSize: 20 };
+    const {
+      page = 1, pageSize = 20,
+      dispatchId, vehicleId, zone,
+      withinRange, alertStatus,
+      startTime, endTime,
+    } = query;
+    const filter: any = {};
+    if (dispatchId) filter.dispatchId = dispatchId;
+    if (vehicleId) filter.vehicleId = vehicleId;
+    if (zone) filter.zone = zone;
+    if (withinRange !== undefined) filter.withinRange = withinRange === 'true' || withinRange === true;
+    if (alertStatus) filter.alertStatus = alertStatus;
+    if (startTime || endTime) {
+      filter.timestamp = {};
+      if (startTime) filter.timestamp.$gte = new Date(startTime);
+      if (endTime) filter.timestamp.$lte = new Date(endTime);
+    }
+
+    const [data, total] = await Promise.all([
+      this.ccModel
+        .find(filter)
+        .sort({ timestamp: -1 })
+        .skip((Number(page) - 1) * Number(pageSize))
+        .limit(Number(pageSize))
+        .populate('dispatchId', 'taskNo')
+        .populate('vehicleId', 'plateNumber')
+        .exec(),
+      this.ccModel.countDocuments(filter).exec(),
+    ]);
+    return { data, total, page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {
-    return { id, message: 'ColdChain stub' };
+    const record = await this.ccModel
+      .findById(id)
+      .populate('dispatchId', 'taskNo status')
+      .populate('vehicleId', 'plateNumber type')
+      .exec();
+    if (!record) throw new NotFoundException(`冷链记录 ${id} 未找到`);
+    return record;
+  }
+
+  async findByDispatch(dispatchId: string, limit = 500) {
+    return this.ccModel
+      .find({ dispatchId })
+      .sort({ timestamp: 1 })
+      .limit(limit)
+      .exec();
+  }
+
+  async findBreaches(query: any) {
+    const { page = 1, pageSize = 20, dispatchId, vehicleId } = query;
+    const filter: any = { alertStatus: ColdChainAlertStatus.BREACH };
+    if (dispatchId) filter.dispatchId = dispatchId;
+    if (vehicleId) filter.vehicleId = vehicleId;
+
+    const [data, total] = await Promise.all([
+      this.ccModel
+        .find(filter)
+        .sort({ timestamp: -1 })
+        .skip((Number(page) - 1) * Number(pageSize))
+        .limit(Number(pageSize))
+        .exec(),
+      this.ccModel.countDocuments(filter).exec(),
+    ]);
+    return { data, total, page: Number(page), pageSize: Number(pageSize) };
   }
 
   async create(dto: any) {
-    return { id: 'new-id', ...dto };
+    // Auto-determine withinRange and alertStatus
+    if (dto.rangeLimit && dto.temperature !== undefined) {
+      dto.withinRange = dto.temperature >= dto.rangeLimit.min && dto.temperature <= dto.rangeLimit.max;
+      if (!dto.withinRange && !dto.alertStatus) {
+        dto.alertStatus = ColdChainAlertStatus.BREACH;
+        dto.alertGenerated = true;
+      }
+    }
+    const record = new this.ccModel(dto);
+    return record.save();
   }
 
-  async update(id: string, dto: any) {
-    return { id, ...dto };
+  async batchCreate(records: any[]) {
+    return this.ccModel.insertMany(records);
   }
 
   async remove(id: string) {
+    const result = await this.ccModel.deleteOne({ _id: id }).exec();
+    if (result.deletedCount === 0) throw new NotFoundException(`冷链记录 ${id} 未找到`);
     return { id, deleted: true };
   }
 }
