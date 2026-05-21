@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  # MongoDB
+  mongo:
+    image: mongo:7
+    container_name: med-mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: med-logistics
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: med-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  # API Backend
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api.Dockerfile
+    container_name: med-api
+    ports:
+      - '4000:4000'
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/med-logistics
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    volumes:
+      - ./apps/api:/app/apps/api
+    command: pnpm dev:api
+
+  # Web Frontend
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+    container_name: med-web
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web:/app/apps/web
+    command: pnpm dev:web
+
+volumes:
+  mongo_data:
+  redis_data:

@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@med/shared-types": ["../../packages/shared-types/src"],
+      "@med/shared-utils": ["../../packages/shared-utils/src"],
+      "@med/ui-components": ["../../packages/ui-components/src"]
+    }
+  },
+  "include": ["src/**/*", "vite-env.d.ts"],
+  "references": [
+    { "path": "../../packages/shared-types" },
+    { "path": "../../packages/shared-utils" },
+    { "path": "../../packages/ui-components" }
+  ]
+}

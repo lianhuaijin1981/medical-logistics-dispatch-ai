@@ -1,0 +1,28 @@
+{
+  "name": "medical-logistics-dispatch-ai",
+  "private": true,
+  "version": "0.0.0",
+  "description": "医药物流智能调度与配货系统 Monorepo",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:api": "turbo dev --filter=@med/api",
+    "dev:web": "turbo dev --filter=@med/web",
+    "dev:ai": "turbo dev --filter=@med/ai-service",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "db:seed": "pnpm --filter @med/api seed",
+    "clean": "turbo clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^2.4.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.4.0",
+    "typescript": "~5.7.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@med/ui-components",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared React UI component library",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --fix",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "clsx": "^2.1.0",
+    "echarts": "^5.5.0",
+    "dayjs": "^1.11.0",
+    "@med/shared-types": "workspace:*",
+    "@med/shared-utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "~5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
