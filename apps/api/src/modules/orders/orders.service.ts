@@ -10,7 +10,36 @@ export class OrdersService {
   ) {}
 
   async findAll(query: any) {
-    const { page = 1, pageSize = 20, status, priority, warehouseId, customerId } = query;
+    // DEV MODE: return realistic mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockOrders = [
+        { _id:'1', orderNo:'YX20250601001', customerId:'c1', warehouseId:'w1',
+          items:[{sku:'SKU001',name:'阿司匹林',quantity:2,unit:'盒',unitPrice:15.50}],
+          status:'pending', priority:'normal', totalAmount:31, temperatureRequirements:['ambient'],
+          createdAt: new Date(), updatedAt: new Date() },
+        { _id:'2', orderNo:'YX20250601002', customerId:'c2', warehouseId:'w1',
+          items:[{sku:'SKU002',name:'生理盐水',quantity:10,unit:'瓶',unitPrice:3.80}],
+          status:'processing', priority:'urgent', totalAmount:38, temperatureRequirements:['cold'],
+          createdAt: new Date(Date.now()-3600000), updatedAt: new Date() },
+        { _id:'3', orderNo:'YX20250601003', customerId:'c1', warehouseId:'w2',
+          items:[{sku:'SKU003',name:'头孢克肟',quantity:5,unit:'盒',unitPrice:22.00}],
+          status:'dispatching', priority:'normal', totalAmount:110, temperatureRequirements:['room'],
+          createdAt: new Date(Date.now()-7200000), updatedAt: new Date() },
+        { _id:'4', orderNo:'YX20250601004', customerId:'c3', warehouseId:'w1',
+          items:[{sku:'SKU004',name:'医用口罩',quantity:100,unit:'只',unitPrice:0.85}],
+          status:'delivered', priority:'normal', totalAmount:85, temperatureRequirements:[],
+          createdAt: new Date(Date.now()-86400000), updatedAt: new Date() },
+        { _id:'5', orderNo:'YX20250601005', customerId:'c2', warehouseId:'w2',
+          items:[{sku:'SKU005',name:'胰岛素注射液',quantity:3,unit:'支',unitPrice:45.00}],
+          status:'in_transit', priority:'critical', totalAmount:135, temperatureRequirements:['cold'],
+          createdAt: new Date(Date.now()-1800000), updatedAt: new Date() },
+      ];
+      const { status } = query;
+      const filtered = status ? mockOrders.filter(o => o.status === status) : mockOrders;
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||20 };
+    }
+
+    const { page = 1, pageSize = 20, status, priority, warehouseId, customerId, keyword, sortBy = 'createdAt', sortOrder = 'desc' } = query;
     const filter: any = {};
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
@@ -20,13 +49,13 @@ export class OrdersService {
     const [data, total] = await Promise.all([
       this.orderModel
         .find(filter)
-        .sort({ createdAt: -1 })
+        .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
         .skip((page - 1) * pageSize)
         .limit(pageSize)
         .exec(),
       this.orderModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total, page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

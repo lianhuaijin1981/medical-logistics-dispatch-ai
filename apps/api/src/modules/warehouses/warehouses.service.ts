@@ -10,6 +10,29 @@ export class WarehousesService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockWarehouses = [
+        { _id:'w1', name:'北京中央仓', code:'WH-0001', type:'central',
+          address:{ city:'北京', district:'大兴区' }, capacity:50000,
+          temperatureZones:['ambient','cool','cold'], enabled:true, createdAt:new Date() },
+        { _id:'w2', name:'上海区域仓', code:'WH-0002', type:'regional',
+          address:{ city:'上海', district:'浦东新区' }, capacity:30000,
+          temperatureZones:['ambient','cold'], enabled:true, createdAt:new Date() },
+        { _id:'w3', name:'广州冷链仓', code:'WH-0003', type:'cold_chain',
+          address:{ city:'广州', district:'白云区' }, capacity:20000,
+          temperatureZones:['cold','frozen'], enabled:true, createdAt:new Date() },
+        { _id:'w4', name:'成都中转仓', code:'WH-0004', type:'transit',
+          address:{ city:'成都', district:'双流区' }, capacity:15000,
+          temperatureZones:['ambient'], enabled:false, createdAt:new Date() },
+      ];
+      const { type, enabled } = query;
+      let filtered = mockWarehouses;
+      if (type) filtered = filtered.filter(w => w.type === type);
+      if (enabled !== undefined) filtered = filtered.filter(w => w.enabled === (enabled === 'true'));
+      return { items: filtered, total: filtered.length, page: Number(query.page) || 1, pageSize: Number(query.pageSize) || 20 };
+    }
+
     const { page = 1, pageSize = 20, type, enabled, code } = query;
     const filter: any = {};
     if (type) filter.type = type;
@@ -25,7 +48,7 @@ export class WarehousesService {
         .exec(),
       this.warehouseModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total, page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

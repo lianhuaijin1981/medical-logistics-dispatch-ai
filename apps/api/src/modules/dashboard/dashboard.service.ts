@@ -57,6 +57,30 @@ export class DashboardService {
   ) {}
 
   async getStats(): Promise<DashboardStats> {
+    // DEV MODE: return realistic mock data so frontend pages have content
+    if (process.env.NODE_ENV === 'development') {
+      return {
+        orders: { total: 128, pending: 12, processing: 8, shipped: 15, delivered: 89, cancelled: 4, todayCount: 7 },
+        inventory: { totalItems: 15234, lowStock: 23, expiringItems: 8, byCategory: [
+          { category: '药品', count: 8234 }, { category: '医疗器械', count: 4200 },
+          { category: '试剂', count: 2100 }, { category: '耗材', count: 700 },
+        ]},
+        vehicles: { total: 18, available: 8, onTrip: 7, maintenance: 2, offline: 1 },
+        drivers: { total: 22, available: 10, onTrip: 8, offDuty: 4 },
+        alerts: { total: 9, critical: 1, warning: 3, info: 5, unresolved: 4 },
+        recentOrders: [
+          { _id:'1', orderNo:'YX20250601001', customerId:'c1', warehouseId:'w1', status:'pending',
+            items:[{sku:'SKU001',name:'阿司匹林',quantity:2,unit:'盒',unitPrice:15.50}],
+            totalAmount:31, priority:'normal', temperatureRequirements:['room'],
+            createdAt: new Date(), updatedAt: new Date() } as any,
+          { _id:'2', orderNo:'YX20250601002', customerId:'c2', warehouseId:'w1', status:'processing',
+            items:[{sku:'SKU002',name:'生理盐水',quantity:10,unit:'瓶',unitPrice:3.80}],
+            totalAmount:38, priority:'urgent', temperatureRequirements:['cold'],
+            createdAt: new Date(Date.now()-3600000), updatedAt: new Date() } as any,
+        ],
+      };
+    }
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 

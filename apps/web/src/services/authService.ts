@@ -57,17 +57,13 @@ export function setStoredUser(user: UserProfile): void {
 }
 
 export async function loginApi(dto: LoginDto): Promise<LoginResult> {
-  const { data } = await axios.post(`${API_BASE}/auth/login`, dto);
-  return data;
+  const res = await axios.post<ApiResponse<LoginResult>>(`${API_BASE}/auth/login`, dto);
+  return res.data.data;
 }
 
 export async function getProfileApi(): Promise<UserProfile> {
-  const { data } = await axios.get(`${API_BASE}/auth/profile`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-    },
-  });
-  return data;
+  const res = await axios.get<ApiResponse<UserProfile>>(`${API_BASE}/auth/profile`);
+  return res.data.data;
 }
 
 export function setupAxiosInterceptors() {

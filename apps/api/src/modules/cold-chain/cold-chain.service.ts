@@ -10,6 +10,33 @@ export class ColdChainService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockRecords = [
+        { _id:'cc1', dispatchId:'dt1', vehicleId:'v1', zone:'cold',
+          timestamp: new Date(), temperature:4.5, humidity:55,
+          withinRange:true, alertStatus:'normal', createdAt:new Date() },
+        { _id:'cc2', dispatchId:'dt2', vehicleId:'v2', zone:'frozen',
+          timestamp:new Date(Date.now()-1800000), temperature:-2.1, humidity:40,
+          withinRange:true, alertStatus:'normal', createdAt:new Date() },
+        { _id:'cc3', dispatchId:'dt1', vehicleId:'v1', zone:'cold',
+          timestamp:new Date(Date.now()-3600000), temperature:8.9, humidity:60,
+          withinRange:false, alertStatus:'warning',
+          notes:'温度传感器异常，温度升高', createdAt:new Date() },
+        { _id:'cc4', dispatchId:'dt3', vehicleId:'v4', zone:'ambient',
+          timestamp:new Date(Date.now()-7200000), temperature:22.5, humidity:50,
+          withinRange:true, alertStatus:'normal', createdAt:new Date() },
+      ];
+      const { dispatchId, vehicleId, zone, withinRange, alertStatus } = query;
+      let filtered = mockRecords;
+      if (dispatchId) filtered = filtered.filter(r => r.dispatchId === dispatchId);
+      if (vehicleId) filtered = filtered.filter(r => r.vehicleId === vehicleId);
+      if (zone) filtered = filtered.filter(r => r.zone === zone);
+      if (withinRange !== undefined) filtered = filtered.filter(r => r.withinRange === (withinRange === 'true' || withinRange === true));
+      if (alertStatus) filtered = filtered.filter(r => r.alertStatus === alertStatus);
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||20 };
+    }
+
     const {
       page = 1, pageSize = 20,
       dispatchId, vehicleId, zone,
@@ -39,7 +66,7 @@ export class ColdChainService {
         .exec(),
       this.ccModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {
@@ -75,7 +102,7 @@ export class ColdChainService {
         .exec(),
       this.ccModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async create(dto: any) {

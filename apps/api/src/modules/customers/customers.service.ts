@@ -10,6 +10,30 @@ export class CustomersService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockCustomers = [
+        { _id:'c1', name:'北京协和医院', type:'hospital', contactName:'张主任',
+          contactPhone:'13800138001', address:{ city:'北京', district:'东城区' },
+          enabled:true, createdAt:new Date() },
+        { _id:'c2', name:'上海瑞金医院', type:'hospital', contactName:'李主任',
+          contactPhone:'13800138002', address:{ city:'上海', district:'黄浦区' },
+          enabled:true, createdAt:new Date() },
+        { _id:'c3', name:'国药控股', type:'distributor', contactName:'王经理',
+          contactPhone:'13800138003', address:{ city:'广州', district:'越秀区' },
+          enabled:true, createdAt:new Date() },
+        { _id:'c4', name:'阿里健康大药房', type:'pharmacy', contactName:'赵店长',
+          contactPhone:'13800138004', address:{ city:'杭州', district:'余杭区' },
+          enabled:false, createdAt:new Date() },
+      ];
+      const { type, enabled, name } = query;
+      let filtered = mockCustomers;
+      if (type) filtered = filtered.filter(c => c.type === type);
+      if (enabled !== undefined) filtered = filtered.filter(c => c.enabled === (enabled === 'true'));
+      if (name) filtered = filtered.filter(c => c.name.includes(name));
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||20 };
+    }
+
     const { page = 1, pageSize = 20, type, enabled, name } = query;
     const filter: any = {};
     if (type) filter.type = type;
@@ -25,7 +49,7 @@ export class CustomersService {
         .exec(),
       this.customerModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

@@ -1,9 +1,29 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ExecutionContext, CallHandler, Injectable, NestInterceptor, ValidationPipe } from '@nestjs/common';
+import { Observable, map } from 'rxjs';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import compression from 'compression';
 import { ConfigService } from '@nestjs/config';
 import { DevAppModule } from './app.dev.module';
+
+// ---- TransformInterceptor: wrap all responses as ApiResponse<T> ----
+@Injectable()
+export class TransformInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      map((data) => {
+        // If data is already wrapped (has data + message), pass through
+        if (data && typeof data === 'object' && 'data' in data && 'message' in data) {
+          return data;
+        }
+        return {
+          data,
+          message: '操作成功',
+        };
+      }),
+    );
+  }
+}
 
 async function bootstrap() {
   // Force development mode (enables mock auth bypass)
@@ -14,7 +34,7 @@ async function bootstrap() {
   });
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 4000);
+  const port = configService.get<number>('PORT', 3001);
 
   // Global middleware
   app.use(compression());
@@ -31,6 +51,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Global interceptor: wrap responses as { data, message }
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   app.setGlobalPrefix('api');
 

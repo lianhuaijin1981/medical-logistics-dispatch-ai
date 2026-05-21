@@ -10,6 +10,31 @@ export class TrackingService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const now = Date.now();
+      const mockTracks = [
+        { _id:'t1', vehicleId:'v1', driverId:'d1', dispatchId:'dt1',
+          location:{ type:'Point', coordinates:[116.397,39.908] },
+          timestamp:new Date(now-60000), speed:42, heading:45,
+          odometer:45000, event:'normal', createdAt:new Date() },
+        { _id:'t2', vehicleId:'v2', driverId:'d2', dispatchId:'dt2',
+          location:{ type:'Point', coordinates:[121.501,31.235] },
+          timestamp:new Date(now-30000), speed:38, heading:120,
+          odometer:78000, event:'normal', createdAt:new Date() },
+        { _id:'t3', vehicleId:'v1', driverId:'d1', dispatchId:'dt1',
+          location:{ type:'Point', coordinates:[116.407,39.918] },
+          timestamp:new Date(), speed:35, heading:47,
+          odometer:45005, event:'normal', createdAt:new Date() },
+      ];
+      const { vehicleId, dispatchId, driverId } = query;
+      let filtered = mockTracks;
+      if (vehicleId) filtered = filtered.filter(t => t.vehicleId === vehicleId);
+      if (dispatchId) filtered = filtered.filter(t => t.dispatchId === dispatchId);
+      if (driverId) filtered = filtered.filter(t => t.driverId === driverId);
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||50 };
+    }
+
     const {
       page = 1, pageSize = 50,
       vehicleId, dispatchId, driverId,
@@ -34,7 +59,7 @@ export class TrackingService {
         .exec(),
       this.trackModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

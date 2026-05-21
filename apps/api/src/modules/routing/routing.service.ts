@@ -27,7 +27,7 @@ export class RoutingService {
         .exec(),
       this.routeModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

@@ -10,6 +10,32 @@ export class DispatchService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockTasks = [
+        { _id:'dt1', taskNo:'DIS-20250601-001', vehicleId:'v1', driverId:'d1',
+          warehouseId:'w1', orderIds:['o1','o2'], status:'dispatching',
+          priority:'normal', totalWeight:28.5, totalVolume:0.8,
+          estimatedDistance:12.3, estimatedDuration:45, createdAt:new Date() },
+        { _id:'dt2', taskNo:'DIS-20250601-002', vehicleId:'v2', driverId:'d2',
+          warehouseId:'w2', orderIds:['o3'], status:'in_transit',
+          priority:'urgent', totalWeight:15.2, totalVolume:0.5,
+          estimatedDistance:8.7, estimatedDuration:30, createdAt:new Date(Date.now()-3600000) },
+        { _id:'dt3', taskNo:'DIS-20250601-003', vehicleId:'v4', driverId:'d3',
+          warehouseId:'w1', orderIds:['o4','o5','o6'], status:'delivered',
+          priority:'normal', totalWeight:42.0, totalVolume:1.2,
+          estimatedDistance:18.5, estimatedDuration:60, createdAt:new Date(Date.now()-7200000) },
+      ];
+      const { status, vehicleId, driverId, warehouseId, priority } = query;
+      let filtered = mockTasks;
+      if (status) filtered = filtered.filter(t => t.status === status);
+      if (vehicleId) filtered = filtered.filter(t => t.vehicleId === vehicleId);
+      if (driverId) filtered = filtered.filter(t => t.driverId === driverId);
+      if (warehouseId) filtered = filtered.filter(t => t.warehouseId === warehouseId);
+      if (priority) filtered = filtered.filter(t => t.priority === priority);
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||20 };
+    }
+
     const { page = 1, pageSize = 20, status, vehicleId, driverId, warehouseId, priority, keyword } = query;
     const filter: any = {};
     if (status) filter.status = status;
@@ -32,7 +58,7 @@ export class DispatchService {
         .exec(),
       this.dispatchModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {

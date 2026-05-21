@@ -10,6 +10,28 @@ export class DriversService {
   ) {}
 
   async findAll(query: any) {
+    // DEV MODE: return mock data
+    if (process.env.NODE_ENV === 'development') {
+      const mockDrivers = [
+        { _id:'d1', name:'张伟', phone:'1380001', licenseNumber:'E12345',
+          status:'available', rating:4.8, totalTrips:156, enabled:true, createdAt:new Date() },
+        { _id:'d2', name:'李强', phone:'1380002', licenseNumber:'E23456',
+          status:'on_trip', rating:4.9, totalTrips:203, enabled:true, createdAt:new Date() },
+        { _id:'d3', name:'王芳', phone:'1380003', licenseNumber:'E34567',
+          status:'available', rating:4.7, totalTrips:89, enabled:true, createdAt:new Date() },
+        { _id:'d4', name:'刘洋', phone:'1380004', licenseNumber:'E45678',
+          status:'off_duty', rating:4.6, totalTrips:67, enabled:true, createdAt:new Date() },
+        { _id:'d5', name:'陈明', phone:'1380005', licenseNumber:'E56789',
+          status:'maintenance', rating:4.5, totalTrips:234, enabled:false, createdAt:new Date() },
+      ];
+      const { status, enabled, keyword } = query;
+      let filtered = mockDrivers;
+      if (status) filtered = filtered.filter(d => d.status === status);
+      if (enabled !== undefined) filtered = filtered.filter(d => d.enabled === (enabled === 'true' || enabled === true));
+      if (keyword) filtered = filtered.filter(d => d.name.includes(keyword) || d.phone.includes(keyword) || d.licenseNumber.includes(keyword));
+      return { items: filtered, total: filtered.length, page: Number(query.page)||1, pageSize: Number(query.pageSize)||20 };
+    }
+
     const { page = 1, pageSize = 20, status, enabled, keyword } = query;
     const filter: any = {};
     if (status) filter.status = status;
@@ -31,7 +53,7 @@ export class DriversService {
         .exec(),
       this.driverModel.countDocuments(filter).exec(),
     ]);
-    return { data, total, page: Number(page), pageSize: Number(pageSize) };
+    return { items: data, total: Number(total), page: Number(page), pageSize: Number(pageSize) };
   }
 
   async findOne(id: string) {
