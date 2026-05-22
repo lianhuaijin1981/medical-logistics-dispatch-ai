@@ -30,27 +30,25 @@ export enum WarehouseType {
 }
 
 export enum VehicleType {
-  TRUCK_SMALL = 'truck_small',
-  TRUCK_MEDIUM = 'truck_medium',
-  TRUCK_LARGE = 'truck_large',
-  REFRIGERATED = 'refrigerated',
-  DANGEROUS_GOODS = 'dangerous_goods',
+  VAN = 'van',             // 厢式货车
+  TRUCK = 'truck',         // 大型卡车
+  REFRIGERATED = 'refrigerated', // 冷藏车
+  EV = 'ev',               // 新能源
 }
 
 export enum VehicleStatus {
-  IDLE = 'idle',
-  LOADING = 'loading',
-  DISPATCHED = 'dispatched',
-  IN_TRANSIT = 'in_transit',
+  AVAILABLE = 'available',
+  ON_TRIP = 'on_trip',
   MAINTENANCE = 'maintenance',
+  OFFLINE = 'offline',
 }
 
 export enum DriverStatus {
   AVAILABLE = 'available',
-  ASSIGNED = 'assigned',
-  ON_ROUTE = 'on_route',
-  RESTING = 'resting',
+  ON_TRIP = 'on_trip',
   OFF_DUTY = 'off_duty',
+  ON_LEAVE = 'on_leave',
+  INACTIVE = 'inactive',
 }
 
 export enum DispatchStatus {
@@ -92,7 +90,7 @@ export enum TemperatureZone {
 
 export enum AlertLevel {
   INFO = 'info',
-  WARN = 'warn',
+  WARNING = 'warning',
   CRITICAL = 'critical',
 }
 
@@ -388,13 +386,12 @@ export interface Alert {
 }
 
 export type AlertType =
-  | 'temperature_excursion'
-  | 'route_deviation'
+  | 'temperature'
+  | 'low_stock'
+  | 'expiring'
+  | 'vehicle_offline'
   | 'delay'
-  | 'vehicle_breakdown'
-  | 'stock_out'
-  | 'expiry_warning'
-  | 'gps_offline';
+  | 'breach';
 
 // ==================== API 请求/响应 ====================
 

@@ -54,7 +54,7 @@ export class DispatchService {
         .skip((Number(page) - 1) * Number(pageSize))
         .limit(Number(pageSize))
         .populate('vehicleId', 'plateNumber type')
-        .populate('driverId', 'name phone')
+        .populate('driverId', 'realName phone')
         .exec(),
       this.dispatchModel.countDocuments(filter).exec(),
     ]);
@@ -65,7 +65,7 @@ export class DispatchService {
     const dispatch = await this.dispatchModel
       .findById(id)
       .populate('vehicleId', 'plateNumber type brand vehicleModel')
-      .populate('driverId', 'name phone licenseNumber')
+      .populate('driverId', 'realName phone licenseNumber')
       .populate('warehouseId', 'name code')
       .populate('orderIds', 'orderNo status totalWeight')
       .exec();

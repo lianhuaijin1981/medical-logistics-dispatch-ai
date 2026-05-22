@@ -1,10 +1,25 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, ExecutionContext, CallHandler, Injectable, NestInterceptor } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { Observable, map } from 'rxjs';
 import compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+class TransformInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      map((data) => {
+        if (data && typeof data === 'object' && 'data' in data && 'message' in data) {
+          return data;
+        }
+        return { data, message: '操作成功' };
+      }),
+    );
+  }
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,6 +45,9 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('api');
+
+  // Global interceptor: wrap responses as { data, message }
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   // Swagger
   const swaggerConfig = new DocumentBuilder()

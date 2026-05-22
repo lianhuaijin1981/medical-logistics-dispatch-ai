@@ -7,16 +7,18 @@ import { cn } from '@med/shared-utils';
 
 const STATUS_LABELS: Record<string, string> = {
   available: '空闲',
-  dispatched: '已调度',
+  on_trip: '配送中',
+  off_duty: '下班',
   on_leave: '休假',
   inactive: '停用',
 };
 
 const STATUS_COLORS: Record<string, string> = {
   available: 'text-green-600 bg-green-50',
-  dispatched: 'text-blue-600 bg-blue-50',
+  on_trip: 'text-blue-600 bg-blue-50',
+  off_duty: 'text-gray-500 bg-gray-100',
   on_leave: 'text-yellow-600 bg-yellow-50',
-  inactive: 'text-gray-400 bg-gray-100',
+  inactive: 'text-red-400 bg-red-50',
 };
 
 const PAGE_SIZE = 10;

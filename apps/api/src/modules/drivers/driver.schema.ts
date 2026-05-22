@@ -5,7 +5,7 @@ export { DriverStatus };
 
 @Schema({ timestamps: true })
 export class Driver extends Document {
-  @Prop({ required: true }) name: string;
+  @Prop({ required: true }) realName: string;
   @Prop({ required: true, match: /^1[3-9]\d{9}$/ }) phone: string;
   @Prop({ required: true, unique: true }) licenseNumber: string;
   @Prop({ enum: DriverStatus, default: DriverStatus.AVAILABLE, index: true }) status: DriverStatus;

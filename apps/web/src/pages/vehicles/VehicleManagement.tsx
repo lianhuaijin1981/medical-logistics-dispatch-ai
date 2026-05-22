@@ -7,35 +7,31 @@ import { cn } from '@med/shared-utils';
 import dayjs from 'dayjs';
 
 const TYPE_LABELS: Record<string, string> = {
-  truck_small: '小型货车',
-  truck_medium: '中型货车',
-  truck_large: '大型货车',
+  van: '厢式货车',
+  truck: '大型卡车',
   refrigerated: '冷藏车',
-  van: '面包车',
-  sedan: '轿车',
+  ev: '新能源车',
 };
 
 const TYPE_COLORS: Record<string, string> = {
-  truck_small: 'text-blue-600 bg-blue-50',
-  truck_medium: 'text-green-600 bg-green-50',
-  truck_large: 'text-purple-600 bg-purple-50',
+  van: 'text-blue-600 bg-blue-50',
+  truck: 'text-green-600 bg-green-50',
   refrigerated: 'text-cyan-600 bg-cyan-50',
-  van: 'text-yellow-600 bg-yellow-50',
-  sedan: 'text-gray-600 bg-gray-100',
+  ev: 'text-purple-600 bg-purple-50',
 };
 
 const STATUS_LABELS: Record<string, string> = {
   available: '空闲',
-  dispatched: '已调度',
+  on_trip: '配送中',
   maintenance: '维修中',
-  inactive: '停用',
+  offline: '离线',
 };
 
 const STATUS_COLORS: Record<string, string> = {
   available: 'text-green-600 bg-green-50',
-  dispatched: 'text-blue-600 bg-blue-50',
+  on_trip: 'text-blue-600 bg-blue-50',
   maintenance: 'text-orange-600 bg-orange-50',
-  inactive: 'text-gray-400 bg-gray-100',
+  offline: 'text-gray-400 bg-gray-100',
 };
 
 const PAGE_SIZE = 10;
@@ -57,7 +53,7 @@ const initialForm = (): VehicleForm => ({
   brand: '',
   vehicleModel: '',
   year: new Date().getFullYear(),
-  type: 'truck_small' as VehicleType,
+  type: 'van' as VehicleType,
   capacity: 1000,
   maxWeight: 2000,
   temperatureZones: [],

@@ -5,6 +5,7 @@ import { cn } from '@med/shared-utils';
 const navItems = [
   { path: '/dashboard', label: '运营大盘', icon: '📊' },
   { path: '/orders', label: '订单管理', icon: '📋' },
+  { path: '/customers', label: '客户管理', icon: '🏥' },
   { path: '/warehouse', label: '仓储管理', icon: '🏭' },
   { path: '/vehicles', label: '车辆管理', icon: '🚚' },
   { path: '/drivers', label: '司机管理', icon: '👤' },

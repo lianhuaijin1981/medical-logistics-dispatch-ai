@@ -156,7 +156,7 @@ const VehicleTracking: React.FC = () => {
                   <span
                     className={cn(
                       'inline-block w-1.5 h-1.5 rounded-full',
-                      v.status === 'idle' ? 'bg-green-400' : v.status === 'dispatched' || v.status === 'in_transit' ? 'bg-blue-400' : 'bg-gray-300',
+                      v.status === 'available' ? 'bg-green-400' : v.status === 'on_trip' ? 'bg-blue-400' : 'bg-gray-300',
                     )}
                   />
                 </div>
